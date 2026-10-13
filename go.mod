@@ -6,7 +6,7 @@ require (
 	github.com/gorilla/websocket v1.5.3
 	github.com/plexusone/omnichat v0.8.1
 	github.com/plexusone/omnillm-core v0.18.1
-	github.com/plexusone/omnimemory v0.2.0
+	github.com/plexusone/omnimemory v0.2.1
 	github.com/plexusone/omnivoice-core v0.15.0
 	github.com/twilio/twilio-go v1.31.2
 )
