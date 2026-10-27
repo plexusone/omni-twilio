@@ -2,6 +2,7 @@ package gateway
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"sync"
 	"time"
@@ -155,6 +156,16 @@ func (s *Session) Interrupt() {
 	s.mu.Lock()
 	s.metrics.InterruptionCount++
 	s.mu.Unlock()
+}
+
+// Hangup ends the call and closes the session. Close alone only stops the
+// session's media stream; Hangup also tells Twilio to end the call, including
+// before the media stream connects, for example while keypad digits play.
+func (s *Session) Hangup(ctx context.Context) error {
+	if _, err := s.gateway.client.HangupCall(ctx, s.id); err != nil {
+		return fmt.Errorf("hang up call %s: %w", s.id, err)
+	}
+	return s.Close()
 }
 
 // Close ends the session.
