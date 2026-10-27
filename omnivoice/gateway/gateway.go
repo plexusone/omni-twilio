@@ -276,7 +276,7 @@ func (g *Gateway) MakeCallWithOptions(ctx context.Context, to string, opts ...co
 	}
 
 	session := g.createSession(call.ID(), call.From(), to, "outbound")
-	return session, nil
+	return g.publicSession(session), nil
 }
 
 // GetSession retrieves an active session by call SID.
@@ -287,7 +287,7 @@ func (g *Gateway) GetSession(callSID string) (coregateway.Session, bool) {
 	if !ok {
 		return nil, false
 	}
-	return session, true
+	return g.publicSession(session), true
 }
 
 // getSessionInternal retrieves the concrete session type (for internal use).
@@ -305,7 +305,7 @@ func (g *Gateway) ListSessions() []coregateway.Session {
 
 	sessions := make([]coregateway.Session, 0, len(g.sessions))
 	for _, s := range g.sessions {
-		sessions = append(sessions, s)
+		sessions = append(sessions, g.publicSession(s))
 	}
 	return sessions
 }
@@ -322,6 +322,9 @@ func (g *Gateway) createSession(callSID, from, to, direction string) *Session {
 		events:    make(chan coregateway.Event, 100),
 		done:      make(chan struct{}),
 		logger:    g.logger.With("call_sid", callSID),
+	}
+	if g.config.Mode == coregateway.PipelineModeAudio {
+		session.audioRecv = make(chan []byte, audioRecvBuffer)
 	}
 
 	g.mu.Lock()
