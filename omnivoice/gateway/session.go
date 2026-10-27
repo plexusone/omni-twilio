@@ -367,6 +367,13 @@ func (s *Session) emitEvent(eventType coregateway.EventType, data any) {
 		Data:      data,
 	}
 
+	// Hold the read lock so Close cannot close the channel mid-send.
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	if s.closed {
+		return
+	}
+
 	select {
 	case s.events <- event:
 	default:

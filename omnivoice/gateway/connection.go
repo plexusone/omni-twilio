@@ -26,6 +26,10 @@ type mediaStreamConn struct {
 	mu        sync.RWMutex
 	closed    bool
 	closeOnce sync.Once
+
+	// writeMu serializes WebSocket writes, which gorilla/websocket does not
+	// allow concurrently.
+	writeMu sync.Mutex
 }
 
 // Twilio Media Streams message types.
@@ -225,6 +229,8 @@ func (c *mediaStreamConn) sendAudio(audio []byte) error {
 		},
 	}
 
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
 	return c.wsConn.WriteJSON(msg)
 }
 
@@ -248,6 +254,8 @@ func (c *mediaStreamConn) sendMark(name string) error {
 		},
 	}
 
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
 	return c.wsConn.WriteJSON(msg)
 }
 
@@ -266,6 +274,8 @@ func (c *mediaStreamConn) clear() error {
 		"streamSid": streamSID,
 	}
 
+	c.writeMu.Lock()
+	defer c.writeMu.Unlock()
 	return c.wsConn.WriteJSON(msg)
 }
 
