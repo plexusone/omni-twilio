@@ -7,7 +7,7 @@ require (
 	github.com/plexusone/omnichat v0.8.1
 	github.com/plexusone/omnillm-core v0.18.1
 	github.com/plexusone/omnimemory v0.2.1
-	github.com/plexusone/omnivoice-core v0.17.0
+	github.com/plexusone/omnivoice-core v0.18.1
 	github.com/twilio/twilio-go v1.32.0
 )
 
