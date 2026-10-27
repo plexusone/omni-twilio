@@ -126,7 +126,7 @@ func (p *Provider) Add(ctx context.Context, req *core.AddRequest) (*core.Memory,
 		source = req.AgentID
 	}
 
-	observation := memoryv1.ObservationCore{
+	observation := memoryv1.ObservationCreateRequest{
 		Content:    req.Content,
 		OccurredAt: now,
 		Source:     source,
@@ -139,7 +139,7 @@ func (p *Provider) Add(ctx context.Context, req *core.AddRequest) (*core.Memory,
 
 	params := &memoryv1.CreateProfileObservationParams{
 		CreateObservationsRequest: &memoryv1.CreateObservationsRequest{
-			Observations: []memoryv1.ObservationCore{observation},
+			Observations: []memoryv1.ObservationCreateRequest{observation},
 		},
 	}
 
