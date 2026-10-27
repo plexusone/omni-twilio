@@ -7,6 +7,32 @@
   "maintainers": ["johncwang@gmail.com"],
   "releases": [
     {
+      "version": "v0.11.0",
+      "date": "2026-10-27",
+      "highlights": [
+        { "description": "Audio pipeline mode: the gateway hands raw call audio to the application instead of running STT, LLM, and TTS" },
+        { "description": "Serialized Media Streams writes and close-safe session events" }
+      ],
+      "added": [
+        { "description": "Audio pipeline mode: with `Mode` set to `PipelineModeAudio`, sessions implement omnivoice-core `gateway.AudioSession` (`AudioFormat`, `ReceiveAudio`, `SendAudio`, `ClearAudio`)", "commit": "0864c89" },
+        { "description": "Audio-mode sessions end and close when the media stream stops", "commit": "0864c89" }
+      ],
+      "fixed": [
+        { "description": "Serialize Media Streams WebSocket writes, which gorilla/websocket does not allow concurrently", "commit": "d7fc933" },
+        { "description": "Drop session events emitted after the session closes instead of panicking on a closed channel", "commit": "d7fc933" }
+      ],
+      "tests": [
+        { "description": "Unit tests driving the media stream handler with simulated Twilio messages in audio mode", "commit": "0864c89" }
+      ],
+      "documentation": [
+        { "description": "Voice gateway guide section on audio mode", "commit": "9893fb4" },
+        { "description": "v0.11.0 release notes at `docs/releases/v0.11.0.md`" }
+      ],
+      "dependencies": [
+        { "description": "Update `github.com/plexusone/omnivoice-core` from v0.17.0 to v0.18.1", "commit": "afb0d8a" }
+      ]
+    },
+    {
       "version": "v0.10.0",
       "date": "2026-10-27",
       "highlights": [
