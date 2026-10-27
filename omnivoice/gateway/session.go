@@ -289,6 +289,10 @@ func (s *Session) startRealtimePipeline(ctx context.Context, conn *mediaStreamCo
 
 	s.emitEvent(EventSessionStarted, nil)
 
+	// Let the read loop deliver caller audio; it drops audio until this is
+	// closed, which the text pipeline does when it starts reading.
+	close(conn.pipelineReady)
+
 	// Forward bridge events to session events
 	go s.forwardBridgeEvents(ctx, bridge)
 
