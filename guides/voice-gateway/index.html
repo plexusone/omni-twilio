@@ -1088,6 +1088,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../releases/v0.12.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0.12.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../releases/v0.11.0/" class="md-nav__link">
         
   
@@ -1952,7 +1980,7 @@
 <a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
 <a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="p">}</span>
 </code></pre></div>
-<p><code>ReceiveAudio</code> is closed and the session ends when the media stream stops. <code>SendAudio</code> returns <code>ErrAudioNotConnected</code> before the stream connects and <code>ErrSessionClosed</code> after the call ends; <code>ClearAudio</code> stops audio that has not played yet. See omnivoice-core's <a href="https://plexusone.github.io/omnivoice-core/guides/call-audio/">Raw Call Audio</a> guide.</p>
+<p><code>ReceiveAudio</code> is closed and the session ends when the media stream stops. To end the call yourself, call <code>Hangup(ctx)</code> on the session: <code>Close</code> stops only the media stream, while <code>Hangup</code> also tells Twilio to end the call, including before the stream connects. <code>SendAudio</code> returns <code>ErrAudioNotConnected</code> before the stream connects and <code>ErrSessionClosed</code> after the call ends; <code>ClearAudio</code> stops audio that has not played yet. See omnivoice-core's <a href="https://plexusone.github.io/omnivoice-core/guides/call-audio/">Raw Call Audio</a> guide.</p>
 <p><strong>Use it for:</strong></p>
 <ul>
 <li>Agents attending meetings by phone, which listen to everyone but speak only when addressed</li>
