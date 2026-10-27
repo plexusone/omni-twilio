@@ -773,6 +773,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#outbound-calls-and-keypad-digits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outbound Calls and Keypad Digits
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tool-calling-text-mode" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1058,6 +1069,34 @@
 
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../releases/v0.10.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    v0.10.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -1586,6 +1625,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#outbound-calls-and-keypad-digits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Outbound Calls and Keypad Digits
+      
+    </span>
+  </a>
   
 </li>
       
@@ -2174,77 +2224,92 @@
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="nx">log</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Interruptions: %d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">metrics</span><span class="p">.</span><span class="nx">InterruptionCount</span><span class="p">)</span>
 </code></pre></div>
 <hr />
+<h2 id="outbound-calls-and-keypad-digits">Outbound Calls and Keypad Digits<a class="headerlink" href="#outbound-calls-and-keypad-digits" title="Permanent link">&para;</a></h2>
+<p><code>MakeCall</code> places an outbound call and returns its session. To send keypad tones (DTMF) once the call is answered, for example to join a meeting's phone dial-in line, pass <code>callsystem.WithSendDigits</code> to <code>MakeCallWithOptions</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/plexusone/omnivoice-core/callsystem&quot;</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="c1">// Wait 4 seconds, enter the meeting ID and #, wait 8 seconds, then enter</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="c1">// * and the passcode and #.</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="nx">session</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gw</span><span class="p">.</span><span class="nx">MakeCallWithOptions</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;+16695550100&quot;</span><span class="p">,</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">    </span><span class="nx">callsystem</span><span class="p">.</span><span class="nx">WithSendDigits</span><span class="p">(</span><span class="s">&quot;WWWW85012345678#WWWWWWWW*482913#&quot;</span><span class="p">),</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="p">)</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="k">if</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="kc">nil</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">err</span>
+<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="p">}</span>
+</code></pre></div>
+<p>Digits use dial-string notation: <code>0</code>-<code>9</code>, <code>*</code>, <code>#</code>, and <code>A</code>-<code>D</code> are tones, <code>w</code> waits half a second, and <code>W</code> waits one second. The gateway plays them with <code>&lt;Play digits&gt;</code> before connecting the media stream, because a bidirectional media stream cannot send DTMF, so the agent starts hearing the call once the digits are entered. Invalid digits return an error before the call is placed.</p>
+<p>The gateway implements omnivoice-core's <code>gateway.OptionCaller</code>, so code written against the provider-neutral interface can use <code>gateway.MakeCallWithOptions(ctx, gw, to, opts...)</code> from <code>github.com/plexusone/omnivoice-core/gateway</code>. See omnivoice-core's <a href="https://plexusone.github.io/omnivoice-core/guides/outbound-calls/">Outbound Calls and Keypad Digits</a> guide for the notation and provider support.</p>
 <h2 id="tool-calling-text-mode">Tool Calling (Text Mode)<a class="headerlink" href="#tool-calling-text-mode" title="Permanent link">&para;</a></h2>
 <p>Define tools for the LLM to call during conversation:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">    </span><span class="c1">// ... other config ...</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
-<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="w">    </span><span class="nx">Tools</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">ToolDefinition</span><span class="p">{</span>
-<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">        </span><span class="s">&quot;get_weather&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a><span class="w">            </span><span class="nx">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Get current weather for a location&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="w">            </span><span class="nx">Parameters</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
-<a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="w">                </span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a><span class="w">                </span><span class="s">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
-<a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="w">                    </span><span class="s">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
-<a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a><span class="w">                        </span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w">        </span><span class="s">&quot;string&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="w">                        </span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;City name&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a><span class="w">                    </span><span class="p">},</span>
-<a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="w">                </span><span class="p">},</span>
-<a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a><span class="w">                </span><span class="s">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;location&quot;</span><span class="p">},</span>
-<a id="__codelineno-13-17" name="__codelineno-13-17" href="#__codelineno-13-17"></a><span class="w">            </span><span class="p">},</span>
-<a id="__codelineno-13-18" name="__codelineno-13-18" href="#__codelineno-13-18"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-13-19" name="__codelineno-13-19" href="#__codelineno-13-19"></a><span class="w">        </span><span class="p">{</span>
-<a id="__codelineno-13-20" name="__codelineno-13-20" href="#__codelineno-13-20"></a><span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">        </span><span class="s">&quot;schedule_appointment&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-21" name="__codelineno-13-21" href="#__codelineno-13-21"></a><span class="w">            </span><span class="nx">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Schedule an appointment&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-22" name="__codelineno-13-22" href="#__codelineno-13-22"></a><span class="w">            </span><span class="nx">Parameters</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
-<a id="__codelineno-13-23" name="__codelineno-13-23" href="#__codelineno-13-23"></a><span class="w">                </span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span><span class="p">,</span>
-<a id="__codelineno-13-24" name="__codelineno-13-24" href="#__codelineno-13-24"></a><span class="w">                </span><span class="s">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
-<a id="__codelineno-13-25" name="__codelineno-13-25" href="#__codelineno-13-25"></a><span class="w">                    </span><span class="s">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span><span class="p">},</span>
-<a id="__codelineno-13-26" name="__codelineno-13-26" href="#__codelineno-13-26"></a><span class="w">                    </span><span class="s">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span><span class="p">},</span>
-<a id="__codelineno-13-27" name="__codelineno-13-27" href="#__codelineno-13-27"></a><span class="w">                </span><span class="p">},</span>
-<a id="__codelineno-13-28" name="__codelineno-13-28" href="#__codelineno-13-28"></a><span class="w">                </span><span class="s">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;date&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;time&quot;</span><span class="p">},</span>
-<a id="__codelineno-13-29" name="__codelineno-13-29" href="#__codelineno-13-29"></a><span class="w">            </span><span class="p">},</span>
-<a id="__codelineno-13-30" name="__codelineno-13-30" href="#__codelineno-13-30"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-13-31" name="__codelineno-13-31" href="#__codelineno-13-31"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-13-32" name="__codelineno-13-32" href="#__codelineno-13-32"></a>
-<a id="__codelineno-13-33" name="__codelineno-13-33" href="#__codelineno-13-33"></a><span class="w">    </span><span class="nx">ToolHandlers</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">ToolHandler</span><span class="p">{</span>
-<a id="__codelineno-13-34" name="__codelineno-13-34" href="#__codelineno-13-34"></a><span class="w">        </span><span class="s">&quot;get_weather&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-35" name="__codelineno-13-35" href="#__codelineno-13-35"></a><span class="w">            </span><span class="nx">location</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">args</span><span class="p">[</span><span class="s">&quot;location&quot;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
-<a id="__codelineno-13-36" name="__codelineno-13-36" href="#__codelineno-13-36"></a><span class="w">            </span><span class="c1">// Call weather API</span>
-<a id="__codelineno-13-37" name="__codelineno-13-37" href="#__codelineno-13-37"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;It&#39;s 72°F and sunny in %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">location</span><span class="p">),</span><span class="w"> </span><span class="kc">nil</span>
-<a id="__codelineno-13-38" name="__codelineno-13-38" href="#__codelineno-13-38"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-13-39" name="__codelineno-13-39" href="#__codelineno-13-39"></a><span class="w">        </span><span class="s">&quot;schedule_appointment&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-13-40" name="__codelineno-13-40" href="#__codelineno-13-40"></a><span class="w">            </span><span class="c1">// Schedule the appointment</span>
-<a id="__codelineno-13-41" name="__codelineno-13-41" href="#__codelineno-13-41"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Appointment scheduled successfully&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span>
-<a id="__codelineno-13-42" name="__codelineno-13-42" href="#__codelineno-13-42"></a><span class="w">        </span><span class="p">},</span>
-<a id="__codelineno-13-43" name="__codelineno-13-43" href="#__codelineno-13-43"></a><span class="w">    </span><span class="p">},</span>
-<a id="__codelineno-13-44" name="__codelineno-13-44" href="#__codelineno-13-44"></a><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="c1">// ... other config ...</span>
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="nx">Tools</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">ToolDefinition</span><span class="p">{</span>
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">        </span><span class="s">&quot;get_weather&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">            </span><span class="nx">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Get current weather for a location&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a><span class="w">            </span><span class="nx">Parameters</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a><span class="w">                </span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a><span class="w">                </span><span class="s">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a><span class="w">                    </span><span class="s">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a><span class="w">                        </span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w">        </span><span class="s">&quot;string&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a><span class="w">                        </span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;City name&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a><span class="w">                    </span><span class="p">},</span>
+<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a><span class="w">                </span><span class="p">},</span>
+<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="w">                </span><span class="s">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;location&quot;</span><span class="p">},</span>
+<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a><span class="w">            </span><span class="p">},</span>
+<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a><span class="w">        </span><span class="p">{</span>
+<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a><span class="w">            </span><span class="nx">Name</span><span class="p">:</span><span class="w">        </span><span class="s">&quot;schedule_appointment&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="w">            </span><span class="nx">Description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Schedule an appointment&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="w">            </span><span class="nx">Parameters</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a><span class="w">                </span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;object&quot;</span><span class="p">,</span>
+<a id="__codelineno-14-24" name="__codelineno-14-24" href="#__codelineno-14-24"></a><span class="w">                </span><span class="s">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span>
+<a id="__codelineno-14-25" name="__codelineno-14-25" href="#__codelineno-14-25"></a><span class="w">                    </span><span class="s">&quot;date&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span><span class="p">},</span>
+<a id="__codelineno-14-26" name="__codelineno-14-26" href="#__codelineno-14-26"></a><span class="w">                    </span><span class="s">&quot;time&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">{</span><span class="s">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;string&quot;</span><span class="p">},</span>
+<a id="__codelineno-14-27" name="__codelineno-14-27" href="#__codelineno-14-27"></a><span class="w">                </span><span class="p">},</span>
+<a id="__codelineno-14-28" name="__codelineno-14-28" href="#__codelineno-14-28"></a><span class="w">                </span><span class="s">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;date&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;time&quot;</span><span class="p">},</span>
+<a id="__codelineno-14-29" name="__codelineno-14-29" href="#__codelineno-14-29"></a><span class="w">            </span><span class="p">},</span>
+<a id="__codelineno-14-30" name="__codelineno-14-30" href="#__codelineno-14-30"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-14-31" name="__codelineno-14-31" href="#__codelineno-14-31"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-14-32" name="__codelineno-14-32" href="#__codelineno-14-32"></a>
+<a id="__codelineno-14-33" name="__codelineno-14-33" href="#__codelineno-14-33"></a><span class="w">    </span><span class="nx">ToolHandlers</span><span class="p">:</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">ToolHandler</span><span class="p">{</span>
+<a id="__codelineno-14-34" name="__codelineno-14-34" href="#__codelineno-14-34"></a><span class="w">        </span><span class="s">&quot;get_weather&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-35" name="__codelineno-14-35" href="#__codelineno-14-35"></a><span class="w">            </span><span class="nx">location</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">args</span><span class="p">[</span><span class="s">&quot;location&quot;</span><span class="p">].(</span><span class="kt">string</span><span class="p">)</span>
+<a id="__codelineno-14-36" name="__codelineno-14-36" href="#__codelineno-14-36"></a><span class="w">            </span><span class="c1">// Call weather API</span>
+<a id="__codelineno-14-37" name="__codelineno-14-37" href="#__codelineno-14-37"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;It&#39;s 72°F and sunny in %s&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">location</span><span class="p">),</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-14-38" name="__codelineno-14-38" href="#__codelineno-14-38"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-14-39" name="__codelineno-14-39" href="#__codelineno-14-39"></a><span class="w">        </span><span class="s">&quot;schedule_appointment&quot;</span><span class="p">:</span><span class="w"> </span><span class="kd">func</span><span class="p">(</span><span class="nx">ctx</span><span class="w"> </span><span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span><span class="w"> </span><span class="nx">args</span><span class="w"> </span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">any</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="kt">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-14-40" name="__codelineno-14-40" href="#__codelineno-14-40"></a><span class="w">            </span><span class="c1">// Schedule the appointment</span>
+<a id="__codelineno-14-41" name="__codelineno-14-41" href="#__codelineno-14-41"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;Appointment scheduled successfully&quot;</span><span class="p">,</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-14-42" name="__codelineno-14-42" href="#__codelineno-14-42"></a><span class="w">        </span><span class="p">},</span>
+<a id="__codelineno-14-43" name="__codelineno-14-43" href="#__codelineno-14-43"></a><span class="w">    </span><span class="p">},</span>
+<a id="__codelineno-14-44" name="__codelineno-14-44" href="#__codelineno-14-44"></a><span class="p">})</span>
 </code></pre></div>
 <hr />
 <h2 id="greeting-message">Greeting Message<a class="headerlink" href="#greeting-message" title="Permanent link">&para;</a></h2>
 <p>Play a greeting when the call connects:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">    </span><span class="c1">// ... other config ...</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">    </span><span class="nx">Greeting</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello! Thank you for calling. How can I help you today?&quot;</span><span class="p">,</span>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="c1">// ... other config ...</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="nx">Greeting</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello! Thank you for calling. How can I help you today?&quot;</span><span class="p">,</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="p">})</span>
 </code></pre></div>
 <hr />
 <h2 id="session-limits">Session Limits<a class="headerlink" href="#session-limits" title="Permanent link">&para;</a></h2>
 <p>Configure session behavior:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="c1">// ... other config ...</span>
-<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>
-<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">    </span><span class="c1">// Maximum call duration (default: 30 minutes)</span>
-<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">    </span><span class="nx">MaxSessionDuration</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Minute</span><span class="p">,</span>
-<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>
-<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a><span class="w">    </span><span class="c1">// Interruption handling</span>
-<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a><span class="w">    </span><span class="c1">// &quot;immediate&quot; - Stop speaking immediately when user talks</span>
-<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a><span class="w">    </span><span class="c1">// &quot;after_sentence&quot; - Finish current sentence</span>
-<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a><span class="w">    </span><span class="c1">// &quot;disabled&quot; - Don&#39;t allow interruptions</span>
-<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a><span class="w">    </span><span class="nx">InterruptionMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;immediate&quot;</span><span class="p">,</span>
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">Config</span><span class="p">{</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span><span class="c1">// ... other config ...</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="c1">// Maximum call duration (default: 30 minutes)</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="w">    </span><span class="nx">MaxSessionDuration</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="nx">time</span><span class="p">.</span><span class="nx">Minute</span><span class="p">,</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">    </span><span class="c1">// Interruption handling</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">    </span><span class="c1">// &quot;immediate&quot; - Stop speaking immediately when user talks</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">    </span><span class="c1">// &quot;after_sentence&quot; - Finish current sentence</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">    </span><span class="c1">// &quot;disabled&quot; - Don&#39;t allow interruptions</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">    </span><span class="nx">InterruptionMode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;immediate&quot;</span><span class="p">,</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="p">})</span>
 </code></pre></div>
 <hr />
 <h2 id="choosing-a-pipeline-mode">Choosing a Pipeline Mode<a class="headerlink" href="#choosing-a-pipeline-mode" title="Permanent link">&para;</a></h2>
@@ -2266,72 +2331,72 @@
 <hr />
 <h2 id="environment-variables">Environment Variables<a class="headerlink" href="#environment-variables" title="Permanent link">&para;</a></h2>
 <h3 id="text-mode_1">Text Mode<a class="headerlink" href="#text-mode_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="c1"># Twilio</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TWILIO_ACCOUNT_SID</span><span class="o">=</span><span class="s2">&quot;ACxxxxxxxx&quot;</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TWILIO_AUTH_TOKEN</span><span class="o">=</span><span class="s2">&quot;your-token&quot;</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="c1"># STT (choose one)</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DEEPGRAM_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
-<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="c1"># LLM (choose one)</span>
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
-<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
-<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>
-<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="c1"># TTS (choose one)</span>
-<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ELEVENLABS_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
-<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
-</code></pre></div>
-<h3 id="realtime-mode_1">Realtime Mode<a class="headerlink" href="#realtime-mode_1" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Twilio</span>
 <a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TWILIO_ACCOUNT_SID</span><span class="o">=</span><span class="s2">&quot;ACxxxxxxxx&quot;</span>
 <a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TWILIO_AUTH_TOKEN</span><span class="o">=</span><span class="s2">&quot;your-token&quot;</span>
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1"># Realtime provider (choose one)</span>
-<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GOOGLE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1"># STT (choose one)</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DEEPGRAM_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1"># LLM (choose one)</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ANTHROPIC_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="c1"># TTS (choose one)</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a><span class="nb">export</span><span class="w"> </span><span class="nv">ELEVENLABS_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+</code></pre></div>
+<h3 id="realtime-mode_1">Realtime Mode<a class="headerlink" href="#realtime-mode_1" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="c1"># Twilio</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TWILIO_ACCOUNT_SID</span><span class="o">=</span><span class="s2">&quot;ACxxxxxxxx&quot;</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">TWILIO_AUTH_TOKEN</span><span class="o">=</span><span class="s2">&quot;your-token&quot;</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="c1"># Realtime provider (choose one)</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="nb">export</span><span class="w"> </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="nb">export</span><span class="w"> </span><span class="nv">GOOGLE_API_KEY</span><span class="o">=</span><span class="s2">&quot;your-key&quot;</span>
 </code></pre></div>
 <hr />
 <h2 id="registry-pattern">Registry Pattern<a class="headerlink" href="#registry-pattern" title="Permanent link">&para;</a></h2>
 <p>Instead of direct construction with <code>gateway.New()</code>, you can use omnivoice-core's provider registry for automatic discovery. This is useful when building applications that work with multiple gateway providers.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">import</span><span class="w"> </span><span class="p">(</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">    </span><span class="nx">omnivoice</span><span class="w"> </span><span class="s">&quot;github.com/plexusone/omnivoice-core&quot;</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">    </span><span class="s">&quot;github.com/plexusone/omnivoice-core/registry&quot;</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">    </span><span class="nx">_</span><span class="w"> </span><span class="s">&quot;github.com/plexusone/omni-twilio/omnivoice/gateway&quot;</span><span class="w"> </span><span class="c1">// Auto-register</span>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="p">)</span>
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="c1">// Get gateway via registry</span>
-<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">omnivoice</span><span class="p">.</span><span class="nx">GetGatewayProvider</span><span class="p">(</span><span class="s">&quot;twilio&quot;</span><span class="p">,</span>
-<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithAPIKey</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TWILIO_AUTH_TOKEN&quot;</span><span class="p">)),</span>
-<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;accountSID&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TWILIO_ACCOUNT_SID&quot;</span><span class="p">)),</span>
-<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;+15551234567&quot;</span><span class="p">),</span>
-<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;publicURL&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://your-server.com&quot;</span><span class="p">),</span>
-<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;listenAddr&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;:8080&quot;</span><span class="p">),</span>
-<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">import</span><span class="w"> </span><span class="p">(</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span><span class="nx">omnivoice</span><span class="w"> </span><span class="s">&quot;github.com/plexusone/omnivoice-core&quot;</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">    </span><span class="s">&quot;github.com/plexusone/omnivoice-core/registry&quot;</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="nx">_</span><span class="w"> </span><span class="s">&quot;github.com/plexusone/omni-twilio/omnivoice/gateway&quot;</span><span class="w"> </span><span class="c1">// Auto-register</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="p">)</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="c1">// Get gateway via registry</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">omnivoice</span><span class="p">.</span><span class="nx">GetGatewayProvider</span><span class="p">(</span><span class="s">&quot;twilio&quot;</span><span class="p">,</span>
+<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithAPIKey</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TWILIO_AUTH_TOKEN&quot;</span><span class="p">)),</span>
+<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;accountSID&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TWILIO_ACCOUNT_SID&quot;</span><span class="p">)),</span>
+<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;phoneNumber&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;+15551234567&quot;</span><span class="p">),</span>
+<a id="__codelineno-19-12" name="__codelineno-19-12" href="#__codelineno-19-12"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;publicURL&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;https://your-server.com&quot;</span><span class="p">),</span>
+<a id="__codelineno-19-13" name="__codelineno-19-13" href="#__codelineno-19-13"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithExtension</span><span class="p">(</span><span class="s">&quot;listenAddr&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;:8080&quot;</span><span class="p">),</span>
+<a id="__codelineno-19-14" name="__codelineno-19-14" href="#__codelineno-19-14"></a><span class="p">)</span>
 </code></pre></div>
 <h3 id="type-safe-options">Type-Safe Options<a class="headerlink" href="#type-safe-options" title="Permanent link">&para;</a></h3>
 <p>For provider-specific configuration, use the type-safe option functions:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/plexusone/omni-twilio/omnivoice/gateway&quot;</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>
-<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">omnivoice</span><span class="p">.</span><span class="nx">GetGatewayProvider</span><span class="p">(</span><span class="s">&quot;twilio&quot;</span><span class="p">,</span>
-<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithAPIKey</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TWILIO_AUTH_TOKEN&quot;</span><span class="p">)),</span>
-<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">    </span><span class="c1">// Type-safe options</span>
-<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithTools</span><span class="p">([]</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">ToolDefinition</span><span class="p">{</span><span class="o">...</span><span class="p">}),</span>
-<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithToolHandlers</span><span class="p">(</span><span class="nx">handlers</span><span class="p">),</span>
-<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithLLMClient</span><span class="p">(</span><span class="nx">myLLMProvider</span><span class="p">),</span>
-<a id="__codelineno-19-9" name="__codelineno-19-9" href="#__codelineno-19-9"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithRealtimeProviderFactory</span><span class="p">(</span><span class="nx">openaiRealtime</span><span class="p">.</span><span class="nx">NewFactory</span><span class="p">()),</span>
-<a id="__codelineno-19-10" name="__codelineno-19-10" href="#__codelineno-19-10"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithRealtimeConfig</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">coregateway</span><span class="p">.</span><span class="nx">RealtimeConfig</span><span class="p">{</span><span class="o">...</span><span class="p">}),</span>
-<a id="__codelineno-19-11" name="__codelineno-19-11" href="#__codelineno-19-11"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">import</span><span class="w"> </span><span class="s">&quot;github.com/plexusone/omni-twilio/omnivoice/gateway&quot;</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="nx">gw</span><span class="p">,</span><span class="w"> </span><span class="nx">err</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">omnivoice</span><span class="p">.</span><span class="nx">GetGatewayProvider</span><span class="p">(</span><span class="s">&quot;twilio&quot;</span><span class="p">,</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w">    </span><span class="nx">registry</span><span class="p">.</span><span class="nx">WithAPIKey</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Getenv</span><span class="p">(</span><span class="s">&quot;TWILIO_AUTH_TOKEN&quot;</span><span class="p">)),</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">    </span><span class="c1">// Type-safe options</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithTools</span><span class="p">([]</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">ToolDefinition</span><span class="p">{</span><span class="o">...</span><span class="p">}),</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithToolHandlers</span><span class="p">(</span><span class="nx">handlers</span><span class="p">),</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithLLMClient</span><span class="p">(</span><span class="nx">myLLMProvider</span><span class="p">),</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithRealtimeProviderFactory</span><span class="p">(</span><span class="nx">openaiRealtime</span><span class="p">.</span><span class="nx">NewFactory</span><span class="p">()),</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">    </span><span class="nx">gateway</span><span class="p">.</span><span class="nx">WithRealtimeConfig</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">coregateway</span><span class="p">.</span><span class="nx">RealtimeConfig</span><span class="p">{</span><span class="o">...</span><span class="p">}),</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="p">)</span>
 </code></pre></div>
 <h3 id="accessing-the-underlying-gateway">Accessing the Underlying Gateway<a class="headerlink" href="#accessing-the-underlying-gateway" title="Permanent link">&para;</a></h3>
 <p>The registry returns a wrapper type. To access the full Twilio Gateway API:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nx">wrapper</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gw</span><span class="p">.(</span><span class="o">*</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">GatewayWrapper</span><span class="p">)</span>
-<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="nx">twilioGw</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">Gateway</span><span class="p">()</span>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
-<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="c1">// Now use Twilio-specific methods</span>
-<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="nx">twilioGw</span><span class="p">.</span><span class="nx">OnCall</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">call</span><span class="w"> </span><span class="o">*</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">CallInfo</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
-<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
-<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="p">})</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nx">wrapper</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">gw</span><span class="p">.(</span><span class="o">*</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">GatewayWrapper</span><span class="p">)</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="nx">twilioGw</span><span class="w"> </span><span class="o">:=</span><span class="w"> </span><span class="nx">wrapper</span><span class="p">.</span><span class="nx">Gateway</span><span class="p">()</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>
+<a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a><span class="c1">// Now use Twilio-specific methods</span>
+<a id="__codelineno-21-5" name="__codelineno-21-5" href="#__codelineno-21-5"></a><span class="nx">twilioGw</span><span class="p">.</span><span class="nx">OnCall</span><span class="p">(</span><span class="kd">func</span><span class="p">(</span><span class="nx">call</span><span class="w"> </span><span class="o">*</span><span class="nx">gateway</span><span class="p">.</span><span class="nx">CallInfo</span><span class="p">)</span><span class="w"> </span><span class="kt">error</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-21-6" name="__codelineno-21-6" href="#__codelineno-21-6"></a><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="kc">nil</span>
+<a id="__codelineno-21-7" name="__codelineno-21-7" href="#__codelineno-21-7"></a><span class="p">})</span>
 </code></pre></div>
 <hr />
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
