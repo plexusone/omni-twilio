@@ -7,6 +7,36 @@
   "maintainers": ["johncwang@gmail.com"],
   "releases": [
     {
+      "version": "v0.10.0",
+      "date": "2026-10-27",
+      "highlights": [
+        { "description": "Keypad digits (DTMF) on answered outbound calls, for example to join a meeting's phone dial-in line" },
+        { "description": "Gateway call options through omnivoice-core's `OptionCaller` interface" }
+      ],
+      "added": [
+        { "description": "`MakeCall` honors `callsystem.WithSendDigits`, playing the digits with `<Play digits>` before `<Connect><Stream>`", "commit": "89f2eef" },
+        { "description": "Gateway `MakeCallWithOptions` implementing omnivoice-core `gateway.OptionCaller`", "commit": "89f2eef" }
+      ],
+      "fixed": [
+        { "description": "OmniMemory provider uses `ObservationCreateRequest`, renamed from `ObservationCore` in twilio-go v1.32", "commit": "58368ed" }
+      ],
+      "tests": [
+        { "description": "Unit tests capturing the Create Call request to check digit TwiML, calls without digits, and invalid digits", "commit": "89f2eef" }
+      ],
+      "documentation": [
+        { "description": "Voice gateway guide section on outbound calls and keypad digits", "commit": "4bf4b31" },
+        { "description": "Release notes link to the changelog on GitHub", "commit": "e43e811" },
+        { "description": "v0.10.0 release notes at `docs/releases/v0.10.0.md`" }
+      ],
+      "dependencies": [
+        { "description": "Update `github.com/plexusone/omnivoice-core` from v0.15.0 to v0.17.0", "commit": "410219a" },
+        { "description": "Update `github.com/twilio/twilio-go` from v1.30.9 to v1.32.0", "commit": "7ab0073" },
+        { "description": "Update `github.com/plexusone/omnimemory` from v0.1.0 to v0.2.1", "commit": "3cc2007" },
+        { "description": "Update `github.com/plexusone/omnillm-core` from v0.17.0 to v0.18.1", "commit": "73467c5" },
+        { "description": "Update `github.com/plexusone/omnichat` from v0.8.0 to v0.8.1", "commit": "4c36714" }
+      ]
+    },
+    {
       "version": "v0.9.0",
       "date": "2026-06-28",
       "highlights": [
