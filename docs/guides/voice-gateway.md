@@ -370,6 +370,27 @@ log.Printf("Interruptions: %d", metrics.InterruptionCount)
 
 ---
 
+## Outbound Calls and Keypad Digits
+
+`MakeCall` places an outbound call and returns its session. To send keypad tones (DTMF) once the call is answered, for example to join a meeting's phone dial-in line, pass `callsystem.WithSendDigits` to `MakeCallWithOptions`:
+
+```go
+import "github.com/plexusone/omnivoice-core/callsystem"
+
+// Wait 4 seconds, enter the meeting ID and #, wait 8 seconds, then enter
+// * and the passcode and #.
+session, err := gw.MakeCallWithOptions(ctx, "+16695550100",
+    callsystem.WithSendDigits("WWWW85012345678#WWWWWWWW*482913#"),
+)
+if err != nil {
+    return err
+}
+```
+
+Digits use dial-string notation: `0`-`9`, `*`, `#`, and `A`-`D` are tones, `w` waits half a second, and `W` waits one second. The gateway plays them with `<Play digits>` before connecting the media stream, because a bidirectional media stream cannot send DTMF, so the agent starts hearing the call once the digits are entered. Invalid digits return an error before the call is placed.
+
+The gateway implements omnivoice-core's `gateway.OptionCaller`, so code written against the provider-neutral interface can use `gateway.MakeCallWithOptions(ctx, gw, to, opts...)` from `github.com/plexusone/omnivoice-core/gateway`. See omnivoice-core's [Outbound Calls and Keypad Digits](https://plexusone.github.io/omnivoice-core/guides/outbound-calls/) guide for the notation and provider support.
+
 ## Tool Calling (Text Mode)
 
 Define tools for the LLM to call during conversation:
