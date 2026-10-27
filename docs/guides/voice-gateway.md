@@ -8,6 +8,7 @@ The voice gateway enables full-duplex phone conversations with AI. It supports t
 |------|---------|----------|
 | **Text** | 500-1000ms | Custom voices, domain-specific STT, tool calling |
 | **Realtime** | 100-200ms | Natural conversation, low latency requirements |
+| **Audio** | None added | Recording, transcription, agents that choose when to speak |
 
 ### Text Mode (STT → LLM → TTS)
 
@@ -47,6 +48,43 @@ Audio In → Realtime API → Audio Out
 
 - Limited to OpenAI or Google voices
 - Provider-specific tool calling
+
+### Audio Mode (Raw Call Audio)
+
+No pipeline: the gateway hands the call's audio to your application and plays the audio your application sends.
+
+```
+Audio In → your application → Audio Out
+```
+
+Set `Mode: coregateway.PipelineModeAudio` (from `github.com/plexusone/omnivoice-core/gateway`). Sessions then implement `coregateway.AudioSession`:
+
+```go
+sess, err := gw.MakeCallWithOptions(ctx, "+16695550100")
+if err != nil {
+    return err
+}
+audio := sess.(coregateway.AudioSession)
+
+go func() {
+    for chunk := range audio.ReceiveAudio() { // mu-law, 8 kHz, mono
+        recorder.Write(chunk)
+    }
+}()
+
+// Speak only when your application decides to.
+if err := audio.SendAudio(mulawSpeech); err != nil {
+    return err
+}
+```
+
+`ReceiveAudio` is closed and the session ends when the media stream stops. `SendAudio` returns `ErrAudioNotConnected` before the stream connects and `ErrSessionClosed` after the call ends; `ClearAudio` stops audio that has not played yet. See omnivoice-core's [Raw Call Audio](https://plexusone.github.io/omnivoice-core/guides/call-audio/) guide.
+
+**Use it for:**
+
+- Agents attending meetings by phone, which listen to everyone but speak only when addressed
+- Call recording and live transcription
+- Custom pipelines
 
 ---
 
