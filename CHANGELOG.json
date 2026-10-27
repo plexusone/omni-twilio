@@ -7,6 +7,28 @@
   "maintainers": ["johncwang@gmail.com"],
   "releases": [
     {
+      "version": "v0.12.0",
+      "date": "2026-10-27",
+      "highlights": [
+        { "description": "`Session.Hangup` ends the call, not just the media stream" },
+        { "description": "Realtime mode receives caller audio" }
+      ],
+      "added": [
+        { "description": "`Session.Hangup` ends the call through the Twilio REST API and closes the session", "commit": "27d4d16" }
+      ],
+      "fixed": [
+        { "description": "Realtime mode signals pipeline readiness so caller audio reaches the realtime pipeline", "commit": "de529ea" }
+      ],
+      "tests": [
+        { "description": "Unit test that realtime mode delivers caller audio to the realtime provider", "commit": "de529ea" },
+        { "description": "Unit test that `Hangup` updates the call to completed and closes the session", "commit": "27d4d16" }
+      ],
+      "documentation": [
+        { "description": "Voice gateway guide explains `Hangup` and `Close` in audio mode", "commit": "1a93e8d" },
+        { "description": "v0.12.0 release notes at `docs/releases/v0.12.0.md`" }
+      ]
+    },
+    {
       "version": "v0.11.0",
       "date": "2026-10-27",
       "highlights": [
