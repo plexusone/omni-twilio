@@ -78,7 +78,7 @@ if err := audio.SendAudio(mulawSpeech); err != nil {
 }
 ```
 
-`ReceiveAudio` is closed and the session ends when the media stream stops. `SendAudio` returns `ErrAudioNotConnected` before the stream connects and `ErrSessionClosed` after the call ends; `ClearAudio` stops audio that has not played yet. See omnivoice-core's [Raw Call Audio](https://plexusone.github.io/omnivoice-core/guides/call-audio/) guide.
+`ReceiveAudio` is closed and the session ends when the media stream stops. To end the call yourself, call `Hangup(ctx)` on the session: `Close` stops only the media stream, while `Hangup` also tells Twilio to end the call, including before the stream connects. `SendAudio` returns `ErrAudioNotConnected` before the stream connects and `ErrSessionClosed` after the call ends; `ClearAudio` stops audio that has not played yet. See omnivoice-core's [Raw Call Audio](https://plexusone.github.io/omnivoice-core/guides/call-audio/) guide.
 
 **Use it for:**
 
