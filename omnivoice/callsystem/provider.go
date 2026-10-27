@@ -4,6 +4,7 @@ package callsystem
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -142,6 +143,10 @@ func (p *Provider) MakeCall(ctx context.Context, to string, opts ...callsystem.C
 		opt(callOpts)
 	}
 
+	if err := callsystem.ValidateSendDigits(callOpts.SendDigits); err != nil {
+		return nil, err
+	}
+
 	from := callOpts.From
 	if from == "" {
 		from = p.defaultFrom
@@ -150,8 +155,8 @@ func (p *Provider) MakeCall(ctx context.Context, to string, opts ...callsystem.C
 		return nil, fmt.Errorf("from number is required (use WithFrom or set default phone number)")
 	}
 
-	// Build TwiML for Media Streams
-	twiml := buildMediaStreamTwiML(p.config.WebhookURL)
+	// Build TwiML for Media Streams, playing any keypad digits first
+	twiml := buildOutboundTwiML(p.config.WebhookURL, callOpts.SendDigits)
 
 	params := &client.MakeCallParams{
 		To:    to,
@@ -455,19 +460,39 @@ func (c *Call) DetachAgent(ctx context.Context) error {
 
 // buildMediaStreamTwiML creates TwiML for Media Streams.
 func buildMediaStreamTwiML(webhookURL string) string {
+	return buildOutboundTwiML(webhookURL, "")
+}
+
+// buildOutboundTwiML creates TwiML that plays sendDigits as keypad tones and
+// then connects the call to Media Streams. The digits are played with
+// <Play digits> before <Connect><Stream>, because a bidirectional media stream
+// cannot send DTMF. sendDigits must already be validated with
+// callsystem.ValidateSendDigits.
+func buildOutboundTwiML(webhookURL, sendDigits string) string {
 	streamURL := webhookURL
 	if streamURL == "" {
 		streamURL = "wss://your-server.com/media-stream"
 	}
 
+	play := ""
+	if sendDigits != "" {
+		play = fmt.Sprintf("\n    <Play digits=\"%s\"/>", twimlDigits(sendDigits))
+	}
+
 	return fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
-<Response>
+<Response>%s
     <Connect>
         <Stream url="%s">
             <Parameter name="direction" value="both"/>
         </Stream>
     </Connect>
-</Response>`, streamURL)
+</Response>`, play, streamURL)
+}
+
+// twimlDigits converts dial-string digits to the <Play digits> form, which
+// supports only w (a half-second pause): each W (one second) becomes ww.
+func twimlDigits(digits string) string {
+	return strings.ReplaceAll(digits, "W", "ww")
 }
 
 // mapCallStatus maps Twilio status to OmniVoice status.

@@ -29,6 +29,7 @@ import (
 	"github.com/gorilla/websocket"
 
 	"github.com/plexusone/omnillm-core/provider"
+	corecallsystem "github.com/plexusone/omnivoice-core/callsystem"
 	coregateway "github.com/plexusone/omnivoice-core/gateway"
 
 	"github.com/plexusone/omni-twilio/client"
@@ -37,7 +38,10 @@ import (
 )
 
 // Verify interface compliance at compile time.
-var _ coregateway.Gateway = (*Gateway)(nil)
+var (
+	_ coregateway.Gateway      = (*Gateway)(nil)
+	_ coregateway.OptionCaller = (*Gateway)(nil)
+)
 
 // Config configures the voice gateway.
 type Config struct {
@@ -260,7 +264,13 @@ func (g *Gateway) Stop() error {
 
 // MakeCall initiates an outbound call.
 func (g *Gateway) MakeCall(ctx context.Context, to string) (coregateway.Session, error) {
-	call, err := g.callSystem.MakeCall(ctx, to)
+	return g.MakeCallWithOptions(ctx, to)
+}
+
+// MakeCallWithOptions initiates an outbound call with call options, such as
+// keypad digits to play once the call is answered (callsystem.WithSendDigits).
+func (g *Gateway) MakeCallWithOptions(ctx context.Context, to string, opts ...corecallsystem.CallOption) (coregateway.Session, error) {
+	call, err := g.callSystem.MakeCall(ctx, to, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("make call: %w", err)
 	}
