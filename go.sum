@@ -20,8 +20,8 @@ github.com/plexusone/omnillm-core v0.18.1 h1:Pp/F7L9edGlPtd/OvTq39/H2XttIXRN9K5c
 github.com/plexusone/omnillm-core v0.18.1/go.mod h1:qX6C1tOcLoDa6C4sgMUUgjX/zjM9CfBXG/pmnK7lveA=
 github.com/plexusone/omnimemory v0.2.1 h1:iDiwRA1ZmTH+TXvkfAfISseZnbLzerKkoPA05KkbBSo=
 github.com/plexusone/omnimemory v0.2.1/go.mod h1:pPDfZt+PbXS9jfqK0NF0muCD3Tpy3YhIZZU4af7hQz0=
-github.com/plexusone/omnivoice-core v0.18.1 h1:bncmb4F10EnjnPC2zG3lB8znNcgIF+K9DcYMBH5Ya0Y=
-github.com/plexusone/omnivoice-core v0.18.1/go.mod h1:chk0WTLBcqoFSb/NBWv1dw52BxH/oTLSYGtcBQ62h/8=
+github.com/plexusone/omnivoice-core v0.19.0 h1:W2/9SysMqW5AqvSAr19jz5mXs9GD0RQ6FRRD2uKWQ78=
+github.com/plexusone/omnivoice-core v0.19.0/go.mod h1:3vrybRusrdZnXQjpNavdTN1sf2HAw905MXoKghhTUqw=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
