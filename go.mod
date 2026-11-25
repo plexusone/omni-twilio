@@ -7,7 +7,7 @@ require (
 	github.com/plexusone/omnichat v0.8.1
 	github.com/plexusone/omnillm-core v0.18.1
 	github.com/plexusone/omnimemory v0.2.1
-	github.com/plexusone/omnivoice-core v0.20.0
+	github.com/plexusone/omnivoice-core v0.20.1
 	github.com/twilio/twilio-go v1.33.1
 )
 
@@ -18,6 +18,6 @@ require (
 	github.com/grokify/sogo v0.16.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/stretchr/testify v1.11.1 // indirect
-	golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a // indirect
+	golang.org/x/exp v0.0.0-20261121134650-e1094eeca1b5 // indirect
 	golang.org/x/text v0.44.0 // indirect
 )
